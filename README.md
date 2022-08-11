@@ -15,7 +15,7 @@ Create User end points
     Update:
 
     parameters:
-    name: email
+    email: email
     password: hash
     password_confirmation: hash
 ```

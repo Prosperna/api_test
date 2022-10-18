@@ -16,3 +16,7 @@ export const verifyToken = (token: string) => {
 export const decodeToken = (token: string) => {
     return jwt.decode(token,{json: true});
 };
+
+export const getDecodedToken = (authorization: string) => {
+    return decodeToken(authorization.replace('Bearer ',''));
+}

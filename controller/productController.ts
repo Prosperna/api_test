@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import Product from '../model/product';
 import { v4 } from 'uuid';
 
+import { getDecodedToken } from '../utils/jwt';
+
 let products: Product[] = [];
 
 
@@ -34,13 +36,17 @@ export const addProduct = async (req:Request,res: Response)=>{
             product_tag,
         } = req.body;
 
+        const decoded = getDecodedToken(req.headers.authorization||'');
+        const user = decoded?.data||{};
+
         // save user
         const savedProduct: Product = {
             product_name,
             product_description,
             product_price,
             product_tag,
-            id: v4()
+            id: v4(),
+            user_id: user.id
         };
         products = [...products, savedProduct];
 
@@ -64,8 +70,11 @@ export const getProduct = async (req:Request,res: Response)=>{
 
         const { id } = req.params;
 
+        const decoded = getDecodedToken(req.headers.authorization||'');
+        const user = decoded?.data||{};
+
         // get product
-        const product = products.find(i => i.id === id);
+        const product = products.find(i => i.id === id && i.user_id === user.id);
 
         if (product) {
 

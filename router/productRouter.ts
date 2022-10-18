@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { addProduct, getAllProduct, getProduct } from '../controller/productController';
+import { addProduct, deleteProduct, getAllProduct, getProduct } from '../controller/productController';
 import authenticated from '../middleware/authenticated';
 import validateAddedProduct from '../middleware/validateAddedProduct';
 
@@ -11,6 +11,8 @@ productRouter.get('/', authenticated ,getAllProduct);
 productRouter.post('/', authenticated, validateAddedProduct, addProduct);
 // register GET request for get specific product
 productRouter.get('/:id', authenticated, getProduct);
+// register DELETE request for specific product
+productRouter.delete('/:id', authenticated, deleteProduct);
 
 
 export default productRouter;

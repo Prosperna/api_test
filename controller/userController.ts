@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { User } from '../model/user';
 import { v4 } from 'uuid';
-import bcrypt from 'bcrypt';
+import bcrypt, { genSalt } from 'bcrypt';
 
 let users: User[] = [];
 
@@ -107,6 +107,68 @@ export const deleteUser = async (req:Request,res: Response)=>{
                 message: "User deleted successfully",
                 data: user
             });
+
+        } else {
+
+            return res.status(404).send({message: "User not found"});
+
+        }
+
+
+    } catch (error) {
+        return res.status(500).send({
+            message: 'Failed to get user list',
+            description: error
+        });
+    }
+}
+
+
+// UPDATE specific user
+export const updateUser = async (req:Request,res: Response)=>{
+    try {
+
+        const { id } = req.params;
+
+        const { email, password, old_password } = req.body;
+
+        // get user to be updated user
+        const user = users.find(i => i.id === id);
+
+        if (user) {
+
+            const userList = users.filter(i => i.id !== id);
+
+            const salt = await bcrypt.genSalt(10);
+
+            // verify old password
+            const matched = bcrypt.compareSync(old_password, user.password);
+
+            if (matched) {
+                const hashedPassword = await bcrypt.hash(password, salt);
+
+                const updatedUser = {
+                    ...user,
+                    email,
+                    password: hashedPassword
+                }
+    
+                // update user list
+                users = [ ...userList, updatedUser ];
+    
+                // return updated user
+                return res.status(200).send({
+                    message: "User updated successfully",
+                    data: updatedUser
+                });
+
+            } else {
+                // return error
+                return res.status(400).send({
+                    message: "Old password not matched",
+                });
+            }
+
 
         } else {
 

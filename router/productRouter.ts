@@ -1,15 +1,16 @@
 import { Router } from 'express';
 import { addProduct, getAllProduct, getProduct } from '../controller/productController';
+import authenticated from '../middleware/authenticated';
 import validateAddedProduct from '../middleware/validateAddedProduct';
 
 const productRouter: Router = Router();
 
 // register GET request for get product list
-productRouter.get('/', getAllProduct);
+productRouter.get('/', authenticated ,getAllProduct);
 // register POST request for add product
-productRouter.post('/', validateAddedProduct, addProduct);
+productRouter.post('/', authenticated, validateAddedProduct, addProduct);
 // register GET request for get specific product
-productRouter.get('/:id', getProduct);
+productRouter.get('/:id', authenticated, getProduct);
 
 
 export default productRouter;

@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt';
 
 let users: User[] = [];
 
-
+// CREATE user
 export const addUser = async (req:Request,res: Response)=>{
     try {
         
@@ -40,11 +40,42 @@ export const addUser = async (req:Request,res: Response)=>{
         });
     }
 }
+
+// GET user list
 export const getAllUser = async (req:Request,res: Response)=>{
     try {
 
         // return all users
         return res.status(200).send(users);
+
+    } catch (error) {
+        return res.status(500).send({
+            message: 'Failed to get user list',
+            description: error
+        });
+    }
+}
+
+// GET specific user using id
+export const getUser = async (req:Request,res: Response)=>{
+    try {
+
+        const { id } = req.params;
+
+        // get user
+        const user = users.find(i => i.id === id);
+
+        if (user) {
+
+            // return specific user
+            return res.status(200).send(user);
+
+        } else {
+
+            return res.status(404).send({message: "User not found"});
+
+        }
+
 
     } catch (error) {
         return res.status(500).send({

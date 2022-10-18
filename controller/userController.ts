@@ -85,3 +85,41 @@ export const getUser = async (req:Request,res: Response)=>{
     }
 }
 
+
+// DELETE specific user using id
+export const deleteUser = async (req:Request,res: Response)=>{
+    try {
+
+        const { id } = req.params;
+
+        // get user to be delete user
+        const user = users.find(i => i.id === id);
+
+        if (user) {
+
+            const userList = users.filter(i => i.id !== id);
+
+            // update user list
+            users = [...userList];
+
+            // return deleted user
+            return res.status(200).send({
+                message: "User deleted successfully",
+                data: user
+            });
+
+        } else {
+
+            return res.status(404).send({message: "User not found"});
+
+        }
+
+
+    } catch (error) {
+        return res.status(500).send({
+            message: 'Failed to get user list',
+            description: error
+        });
+    }
+}
+

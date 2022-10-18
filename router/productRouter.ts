@@ -1,10 +1,15 @@
 import { Router } from 'express';
-import { getAllProduct } from '../controller/productController';
+import { addProduct, getAllProduct, getProduct } from '../controller/productController';
+import validateAddedProduct from '../middleware/validateAddedProduct';
 
-const userRouter: Router = Router();
+const productRouter: Router = Router();
 
-// register POST request for add user
-userRouter.get('/',getAllProduct);
+// register GET request for get product list
+productRouter.get('/', getAllProduct);
+// register POST request for add product
+productRouter.post('/', validateAddedProduct, addProduct);
+// register GET request for get specific product
+productRouter.get('/:id', getProduct);
 
 
-export default userRouter;
+export default productRouter;

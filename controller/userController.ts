@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { User } from '../model/user';
 import { v4 } from 'uuid';
-import bcrypt, { genSalt } from 'bcrypt';
+import bcrypt from 'bcrypt';
 
-let users: User[] = [];
+export let users: User[] = [];
 
 // CREATE user
 export const addUser = async (req:Request,res: Response)=>{

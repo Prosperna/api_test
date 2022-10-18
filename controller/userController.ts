@@ -40,4 +40,17 @@ export const addUser = async (req:Request,res: Response)=>{
         });
     }
 }
+export const getAllUser = async (req:Request,res: Response)=>{
+    try {
+
+        // return all users
+        return res.status(200).send(users);
+
+    } catch (error) {
+        return res.status(500).send({
+            message: 'Failed to get user list',
+            description: error
+        });
+    }
+}
 

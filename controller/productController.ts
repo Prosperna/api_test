@@ -95,3 +95,44 @@ export const getProduct = async (req:Request,res: Response)=>{
         });
     }
 }
+
+
+// DELETE specific user using id
+export const deleteProduct = async (req:Request, res: Response)=>{
+    try {
+
+        const { id } = req.params;
+
+        const decoded = getDecodedToken(req.headers.authorization||'');
+        const user = decoded?.data||{};
+
+        // get product to be delete
+        const product = products.find(i => i.id === id && i.user_id == user.id);
+
+        if (product) {
+
+            const productList = products.filter(i => i.id !== id);
+
+            // update user list
+            products = [...productList];
+
+            // return deleted user
+            return res.status(200).send({
+                message: "Product deleted successfully",
+                data: product
+            });
+
+        } else {
+
+            return res.status(404).send({message: "Product not found"});
+
+        }
+
+
+    } catch (error) {
+        return res.status(500).send({
+            message: 'Failed to delete product',
+            description: error
+        });
+    }
+}

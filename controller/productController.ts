@@ -39,7 +39,7 @@ export const addProduct = async (req:Request,res: Response)=>{
         const decoded = getDecodedToken(req.headers.authorization||'');
         const user = decoded?.data||{};
 
-        // save user
+        // save product
         const savedProduct: Product = {
             product_name,
             product_description,
@@ -113,10 +113,10 @@ export const deleteProduct = async (req:Request, res: Response)=>{
 
             const productList = products.filter(i => i.id !== id);
 
-            // update user list
+            // update product list
             products = [...productList];
 
-            // return deleted user
+            // return deleted product
             return res.status(200).send({
                 message: "Product deleted successfully",
                 data: product
@@ -132,6 +132,57 @@ export const deleteProduct = async (req:Request, res: Response)=>{
     } catch (error) {
         return res.status(500).send({
             message: 'Failed to delete product',
+            description: error
+        });
+    }
+}
+
+// UPDATE specific product
+export const updateProduct = async (req:Request,res: Response)=>{
+    try {
+
+        const { id } = req.params;
+
+        const { product_description, product_name, product_price, product_tag } = req.body;
+
+        // get auth user id
+        const decoded = getDecodedToken(req.headers.authorization||'');
+        const user = decoded?.data||{};
+
+        // get product to be updated
+        const product = products.find(i => i.id === id && i.user_id === user.id);
+
+        if (product) {
+
+            const productList = products.filter(i => i.id !== id);
+
+            const updatedProduct = {
+                ...product,
+                product_name,
+                product_description,
+                product_price,
+                product_tag
+            }
+
+            // update product list
+            products = [ ...productList, updatedProduct ];
+
+            // return updated product
+            return res.status(200).send({
+                message: "Product updated successfully",
+                data: updatedProduct
+            });
+
+        } else {
+
+            return res.status(404).send({message: "Product not found"});
+
+        }
+
+
+    } catch (error) {
+        return res.status(500).send({
+            message: 'Failed to update product',
             description: error
         });
     }

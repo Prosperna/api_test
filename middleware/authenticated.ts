@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { verifyToken } from '../utils/jwt';
+import { decodeToken, verifyToken } from '../utils/jwt';
 
 const authenticated = async (req: Request, res: Response, next:NextFunction) => {
     try {
@@ -10,6 +10,8 @@ const authenticated = async (req: Request, res: Response, next:NextFunction) => 
 
            const isAuthenticated = verifyToken(token||'');
            if (isAuthenticated) {
+
+            res.locals = decodeToken(token)?.data;
     
             next();
     

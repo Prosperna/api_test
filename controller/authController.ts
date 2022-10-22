@@ -52,6 +52,25 @@ export const login = async (req:Request,res: Response)=>{
 }
 
 
+export const authUser = async (req:Request,res: Response)=>{
+    try {
+        
+        // find user from the user list
+        const user = users.find(i => i.id === res.locals.id);
+
+        return res.status(200).send({
+            data: user
+        });
+
+    } catch (error) {
+        return res.status(500).send({
+            message: 'Failed to get auth user',
+            description: error
+        });
+    }
+}
+
+
 
 
 

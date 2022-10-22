@@ -130,23 +130,19 @@ export const updateUser = async (req:Request,res: Response)=>{
 
         const { id } = req.params;
 
-        const { email, password, old_password } = req.body;
+        const { email, password } = req.body;
 
         // get user to be updated user
         const user = users.find(i => i.id === id);
 
         if (user) {
+            if (res.locals.id == user.id) {
 
-            const userList = users.filter(i => i.id !== id);
-
-            const salt = await bcrypt.genSalt(10);
-
-            // verify old password
-            const matched = bcrypt.compareSync(old_password, user.password);
-
-            if (matched) {
+                const userList = users.filter(i => i.id !== id);
+    
+                const salt = await bcrypt.genSalt(10);
                 const hashedPassword = await bcrypt.hash(password, salt);
-
+    
                 const updatedUser = {
                     ...user,
                     email,
@@ -163,12 +159,10 @@ export const updateUser = async (req:Request,res: Response)=>{
                 });
 
             } else {
-                // return error
                 return res.status(400).send({
-                    message: "Old password not matched",
+                    message: "You can only update your account",
                 });
             }
-
 
         } else {
 

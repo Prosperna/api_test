@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
 import joi from 'joi';
-
 export const validateAddedUser = async (req: Request, res: Response, next:NextFunction)=> {
 try {
 

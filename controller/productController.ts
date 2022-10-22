@@ -2,10 +2,8 @@ import { Request, Response } from 'express';
 import Product from '../model/product';
 import { v4 } from 'uuid';
 
-import { getDecodedToken } from '../utils/jwt';
 
-let products: Product[] = [];
-
+export let products: Product[] = [];
 
 
 // GET product list
@@ -13,7 +11,7 @@ export const getAllProduct = async (req:Request,res: Response)=>{
     try {
 
         // return product list
-        return res.status(200).send(products);
+        return res.status(200).send(products.filter(i => i.user_id === res.locals.id));
 
     } catch (error) {
         return res.status(500).send({
@@ -36,9 +34,6 @@ export const addProduct = async (req:Request,res: Response)=>{
             product_tag,
         } = req.body;
 
-        const decoded = getDecodedToken(req.headers.authorization||'');
-        const user = decoded?.data||{};
-
         // save product
         const savedProduct: Product = {
             product_name,
@@ -46,7 +41,7 @@ export const addProduct = async (req:Request,res: Response)=>{
             product_price,
             product_tag,
             id: v4(),
-            user_id: user.id
+            user_id: res.locals.id
         };
         products = [...products, savedProduct];
 
@@ -70,11 +65,8 @@ export const getProduct = async (req:Request,res: Response)=>{
 
         const { id } = req.params;
 
-        const decoded = getDecodedToken(req.headers.authorization||'');
-        const user = decoded?.data||{};
-
         // get product
-        const product = products.find(i => i.id === id && i.user_id === user.id);
+        const product = products.find(i => i.id === id && i.user_id === res.locals.id);
 
         if (product) {
 
@@ -103,11 +95,9 @@ export const deleteProduct = async (req:Request, res: Response)=>{
 
         const { id } = req.params;
 
-        const decoded = getDecodedToken(req.headers.authorization||'');
-        const user = decoded?.data||{};
 
         // get product to be delete
-        const product = products.find(i => i.id === id && i.user_id == user.id);
+        const product = products.find(i => i.id === id && i.user_id == res.locals.id);
 
         if (product) {
 
@@ -145,16 +135,12 @@ export const updateProduct = async (req:Request,res: Response)=>{
 
         const { product_description, product_name, product_price, product_tag } = req.body;
 
-        // get auth user id
-        const decoded = getDecodedToken(req.headers.authorization||'');
-        const user = decoded?.data||{};
-
         // get product to be updated
-        const product = products.find(i => i.id === id && i.user_id === user.id);
+        const product = products.find(i => i.id === id && i.user_id === res.locals.id);
 
         if (product) {
 
-            const productList = products.filter(i => i.id !== id);
+            const productList = products.filter(i => i.id !== product.id);
 
             const updatedProduct = {
                 ...product,
@@ -175,7 +161,7 @@ export const updateProduct = async (req:Request,res: Response)=>{
 
         } else {
 
-            return res.status(404).send({message: "Product not found"});
+            return res.status(404).send({message: products});
 
         }
 

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { addProduct, deleteProduct, getAllProduct, getProduct } from '../controller/productController';
+import { addProduct, deleteProduct, getAllProduct, getProduct, updateProduct } from '../controller/productController';
 import authenticated from '../middleware/authenticated';
 import validateAddedProduct from '../middleware/validateAddedProduct';
 
@@ -13,6 +13,8 @@ productRouter.post('/', authenticated, validateAddedProduct, addProduct);
 productRouter.get('/:id', authenticated, getProduct);
 // register DELETE request for specific product
 productRouter.delete('/:id', authenticated, deleteProduct);
+// register PUT request for update
+productRouter.put('/:id', authenticated, updateProduct);
 
 
 export default productRouter;
